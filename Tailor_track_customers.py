@@ -11,7 +11,6 @@ port    =  5432
 user    = 'tailordb'
 password= 'tailorapp'
 database= 'tailor'
-
 #AWS service credentials
 dynamodb_config = boto3.resource('dynamodb')
 dynamodb_table  = dynamodb_config.Table('customers')
