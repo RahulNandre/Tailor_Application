@@ -1,5 +1,6 @@
 import boto3
 import sys
+import os
 import json
 import psycopg2
 import pandas as pd
@@ -9,30 +10,27 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 #############################################variable initialization#############################
 #database credentials
-host    = 'testtailor.ctwfk2zxzjto.ap-south-1.rds.amazonaws.com'
-port    =  5432
-user    = 'tailordb'
-password= 'tailorapp'
-database= 'tailor'
-#AWS service credentials
-dynamodb_config = boto3.resource('dynamodb')
-dynamodb_table  = dynamodb_config.Table('customers')
+# host    = 'testtailor.ctwfk2zxzjto.ap-south-1.rds.amazonaws.com'
+# port    =  5432
+# user    = 'tailordb'
+# password= 'tailorapp'
+# database= 'tailor'
+# resource= 'dynamodb'
+# table   = 'customers'
+
+host    = os.environ['host']
+port    = os.environ['port']
+user    = os.environ['user']
+password= os.environ['password']
+database= os.environ['database']
+resource= os.environ['resource']
+table   = os.environ['table']
+dynamodb_config = boto3.resource(resource)
+dynamodb_table  = dynamodb_config.Table(table)
 
 db_status = False
-try:
-    logger.info("connecting to database...")
-    connection = psycopg2.connect(
-        host     = host,
-        port     = port,
-        user     = user,
-        password = password,
-        database = database
-        )
-    cursor=connection.cursor()
-    db_status = True
-    logger.info("successfully connected to database!")
-except Exception as e:
-    logger.info("error while connecting to the database "+str(e))
+connection = 0
+cursor = 0
 ################################################################################################
 
 def delete_records(data):
@@ -40,7 +38,6 @@ def delete_records(data):
         logger.info("deleting records ids "+str(list(data.id)))
         data = list(data.id)
         for i in data:
-            # "DELETE FROM parts WHERE part_id = %s", (part_id,)
             query= """delete from tailor.tailor_default_customers where id=%s;"""
             cursor.execute(query,str(i))
             connection.commit()
@@ -87,6 +84,21 @@ def read_data():
 #execution point
 def lambda_handler(event, context):
     #database connection
+    try:
+        logger.info("connecting to database...")
+        connection = psycopg2.connect(
+            host     = host,
+            port     = port,
+            user     = user,
+            password = password,
+            database = database
+            )
+        cursor=connection.cursor()
+        db_status = True
+        logger.info("successfully connected to database!")
+    except Exception as e:
+        logger.info("error while connecting to the database "+str(e))
+
     if db_status:
         read_data()
     else:
