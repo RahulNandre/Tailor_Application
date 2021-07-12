@@ -16,5 +16,5 @@ phases:
   post_build:
     commands:
       - echo "Updating lambda Function..."
-      - aws lambda update-function-code --function-name Tailor_track_customers --zip-file fileb://deployment_package.zip
+      - aws lambda update-function-code --function-name Tailor_track_customers/Tailor_track_customers --zip-file fileb://deployment_package.zip
       - echo "DONE!!"
