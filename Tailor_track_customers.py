@@ -84,6 +84,8 @@ def read_data():
 #execution point
 def lambda_handler(event, context):
     #database connection
+    global connection
+    global cursor
     try:
         logger.info("connecting to database...")
         connection = psycopg2.connect(
