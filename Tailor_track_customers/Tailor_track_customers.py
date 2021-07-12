@@ -32,7 +32,7 @@ try:
     db_status = True
     logger.info("successfully connected to database!")
 except Exception as e:
-    logger.info("error while connecting to database "+str(e))
+    logger.info("error while connecting to the database "+str(e))
 ################################################################################################
 
 def delete_records(data):
